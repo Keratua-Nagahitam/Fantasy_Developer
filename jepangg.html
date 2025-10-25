@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Belajar Bahasa Jepang (Interaktif)</title>
+<link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg-paper: #fbf6f0;
+    --wood: #5c3822;
+    --accent-red: #b83b24;
+    --muted-ink: #2d2a26;
+    --gold: #caa04a;
+    --card-bg: rgba(255,255,255,0.92);
+    --shadow: 0 8px 26px rgba(0,0,0,0.12);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: "Noto Serif JP", "Sawarabi Mincho", "Segoe UI", sans-serif;
+    color:var(--muted-ink);
+    background:
+      radial-gradient(1200px 600px at 10% 12%, rgba(184,59,36,0.04), transparent 12%),
+      linear-gradient(180deg, #fffdfa 0%, var(--bg-paper) 55%, #f8f6f3 100%);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:'';
+    position:fixed; inset:0; pointer-events:none;
+    background-image:
+      linear-gradient(90deg, rgba(0,0,0,0.007) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(0,0,0,0.007) 1px, transparent 1px);
+    background-size: 90px 90px, 140px 140px;
+    mix-blend-mode:overlay;
+    opacity:0.55;
+  }
+
+  header{
+    text-align:center; padding:18px 16px;
+    color:var(--bg-paper);
+    background: linear-gradient(90deg, rgba(184,59,36,0.98), rgba(131,88,194,0.04));
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    font-size:1.45rem; font-weight:700; position:relative;
+  }
+  header .sub{ display:block; font-size:0.85rem; margin-top:6px; color: rgba(255,245,235,0.9); font-weight:400; }
+
+  header::after{
+    content:''; width:96px; height:10px; display:block; margin:12px auto 0;
+    background: linear-gradient(90deg,var(--accent-red), #a83a2a); border-radius:6px;
+  }
+
+  nav{
+    display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
+    padding:12px 10px; margin:14px auto; max-width:1100px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.45));
+    border-radius:12px; box-shadow: var(--shadow); border:1px solid rgba(0,0,0,0.03);
+    backdrop-filter: blur(4px);
+  }
+  nav button{
+    padding:10px 14px; border-radius:10px; border:none; cursor:pointer;
+    background: transparent; color:var(--wood); font-weight:700; transition: all .22s;
+    font-family: "Sawarabi Mincho", serif;
+  }
+  nav button:hover{ transform:translateY(-3px); color:var(--accent-red); }
+
+  main{max-width:1100px; margin:18px auto; padding:0 14px 80px;}
+
+  section{ display:none; padding:18px; animation:fadeIn .45s; }
+  section.active{ display:block; background:var(--card-bg); border-radius:12px; box-shadow:var(--shadow); border:1px solid rgba(0,0,0,0.04); }
+
+  h2{ margin:0 0 12px; font-family:"Sawarabi Mincho", serif; color:var(--wood); }
+
+  .kanaBtn{
+    display:inline-block; margin:8px; padding:14px 12px; border-radius:12px;
+    background:linear-gradient(180deg, #fff, #fcfbf9); box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+    cursor:pointer; border:1px solid rgba(0,0,0,0.03); text-align:center; font-size:1.05em; min-width:72px;
+    font-weight:700; color:var(--muted-ink); transition:transform .18s, box-shadow .18s; white-space:pre-line;
+    font-family:"Noto Serif JP", serif;
+  }
+  .kanaBtn:hover{ transform:translateY(-6px) rotate(-1deg); box-shadow: 0 12px 22px rgba(0,0,0,0.12); color:var(--accent-red); }
+
+  .card{ display:inline-block; margin:8px; padding:12px; border-radius:10px; background:linear-gradient(180deg,#fff,#faf7f3); box-shadow:0 8px 18px rgba(0,0,0,.08); text-align:center; transition:.25s; width:160px; vertical-align:top; border:1px solid rgba(0,0,0,0.03); }
+  .card:hover{ transform:translateY(-6px); box-shadow: 0 18px 32px rgba(0,0,0,0.12); }
+
+  .quiz-box{ margin:14px auto; padding:16px; border-radius:12px; background:linear-gradient(180deg,#fff,#fcfbf9); box-shadow:0 10px 26px rgba(0,0,0,.06); max-width:720px; text-align:center; border:1px solid rgba(0,0,0,0.03); }
+
+  .quiz-btn{ margin:6px; padding:8px 12px; border:none; border-radius:10px; cursor:pointer; background:linear-gradient(180deg,var(--accent-red), #9a2e1f); color:white; transition:.2s; font-weight:700; }
+  .quiz-btn:hover{ transform:translateY(-4px); box-shadow:0 8px 18px rgba(168,58,42,0.14); }
+
+  .subnav{ margin:10px 0; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  .subnav button{ background:transparent; color:var(--wood); padding:8px 10px; border-radius:8px; border:1px dashed rgba(0,0,0,0.04); cursor:pointer; transition:.2s; font-weight:600; }
+  .subnav button:hover{ background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4)); color:var(--accent-red); transform:translateY(-4px); }
+
+  .search{ display:block; margin:10px auto 18px; max-width:420px; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,0.06); box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); }
+
+  input[type="text"], select, input[type="number"]{ padding:8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); font-size:1em; background:transparent; }
+
+  @media (max-width:900px){
+    .card{ width:130px; padding:10px; } .kanaBtn{ padding:10px; font-size:1em; } .quiz-box{ max-width:92%; }
+  }
+
+  .scene-blur{
+    position:fixed; left:0; top:0; width:100%; height:100%; pointer-events:none; opacity:0.06; mix-blend-mode:soft-light;
+    background-image: radial-gradient( circle at 15% 20%, rgba(255,210,200,0.85), transparent 12%),
+                      radial-gradient( circle at 85% 80%, rgba(220,170,130,0.75), transparent 14%);
+  }
+
+  
+  #loading{
+    position:fixed; inset:0; background:linear-gradient(180deg, rgba(10,8,6,0.85), rgba(10,8,6,0.6));
+    display:flex; align-items:center; justify-content:center; z-index:9999; color:white; flex-direction:column;
+    transition:opacity .5s ease, visibility .5s;
+  }
+  #loading.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+  .loader-card{
+    background: linear-gradient(180deg, rgba(255,250,245,0.06), rgba(255,250,245,0.02));
+    padding:18px; border-radius:14px; border:1px solid rgba(255,255,255,0.06);
+    display:flex; align-items:center; gap:14px; box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  }
+  .torii-svg{ width:86px; height:46px; display:block; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.45)); }
+  .loading-text{ font-family:"Sawarabi Mincho", serif; font-size:1.15rem; letter-spacing:0.6px; color: #fff9f3; }
+  .flourish{ width:120px; height:4px; margin:6px auto 0; border-radius:4px; background:linear-gradient(90deg,var(--gold), rgba(255,255,255,0.1)); opacity:0.95;}
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+  @keyframes leafFall {
+    0%{ transform: translateY(-10vh) rotate(0) translateX(0); opacity:0 }
+    10%{ opacity:1 }
+    100%{ transform: translateY(110vh) rotate(720deg) translateX(60vw); opacity:0 }
+  }
+
+
+  #toast{ position:fixed; left:50%; transform:translateX(-50%); bottom:28px; background:var(--wood); color:var(--bg-paper); padding:10px 14px; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.3); display:none; z-index:9998; }
+
+  .quiz-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+  }
+  
+  .mute-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #6c757d, #5a6268);
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9em;
+    font-weight: 600;
+  }
+  
+  .mute-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  .mute-btn.muted {
+    background: linear-gradient(180deg, #28a745, #218838);
+  }
+
+</style>
+</head>
+<body>
+<div id="loading" aria-hidden="false">
+  <div class="loader-card" role="status" aria-live="polite">
+    <svg class="torii-svg" viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="6" y="6" width="188" height="18" rx="6" ry="6" fill="#b83b24"/>
+      <rect x="18" y="28" width="164" height="8" rx="4" fill="#8a2f20"/>
+      <rect x="26" y="36" width="14" height="44" fill="#7a2f1b"/>
+      <rect x="160" y="36" width="14" height="44" fill="#7a2f1b"/>
+      <rect x="40" y="48" width="120" height="6" fill="#fff" opacity="0.06"/>
+    </svg>
+
+    <div>
+      <div class="loading-text">Memasuki Taman Bahasa — Sebentar...</div>
+      <div class="flourish" aria-hidden="true"></div>
+    </div>
+  </div>
+</div>
+
+<div class="scene-blur" aria-hidden="true"></div>
+
+<header>
+  🎌 Belajar Bahasa Jepang
+  <span class="sub">Belajar merupakan kunci sukses</span>
+</header>
+
+<nav>
+  <button onclick="showSection('hiraganaSec')">Hiragana</button>
+  <button onclick="showSection('katakanaSec')">Katakana</button>
+  <button onclick="showSection('kosakataSec')">Kosakata</button>
+  <button onclick="showSection('quizSec')">Kuis</button>
+  <button onclick="toggleMusic()" title="Mute / Unmute musik latar" id="musicBtn" style="margin-left:8px;padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.04);background:transparent;color:var(--wood)">🔈 Musik</button>
+</nav>
+
+<main>
+  <section id="hiraganaSec" class="active">
+    <h2>Hiragana</h2>
+    <div id="hiragana"></div>
+  </section>
+
+  <section id="katakanaSec">
+    <h2>Katakana</h2>
+    <div id="katakana"></div>
+  </section>
+
+  <section id="kosakataSec">
+    <h2>Kosakata</h2>
+    <div class="subnav">
+      <button onclick="showSubKosakata('angka')">Angka</button>
+      <button onclick="showSubKosakata('warna')">Warna</button>
+      <button onclick="showSubKosakata('makanan')">Makanan/Minuman</button>
+      <button onclick="showSubKosakata('salam')">Salam & Ungkapan</button>
+      <button onclick="showSubKosakata('kegiatan')">Kegiatan</button>
+      <button onclick="showSubKosakata('alat')">Alat Rumah Tangga</button>
+      <button onclick="showSubKosakata('tempat')">Tempat & Transportasi</button>
+      <button onclick="showSubKosakata('sehari')">Sehari-hari</button>
+      <button onclick="showSubKosakata('kerja')">Kata Kerja</button>
+      <button onclick="showSubKosakata('sifat')">Kata Sifat</button>
+    </div>
+
+    <input class="search" id="kosSearch" placeholder="Cari kosakata (ketik JP atau ID)..." oninput="filterKosakata()"/>
+    <div id="angka" class="kosakata-category"></div>
+    <div id="warna" class="kosakata-category" style="display:none"></div>
+    <div id="makanan" class="kosakata-category" style="display:none"></div>
+    <div id="salam" class="kosakata-category" style="display:none"></div>
+    <div id="kegiatan" class="kosakata-category" style="display:none"></div>
+    <div id="alat" class="kosakata-category" style="display:none"></div>
+    <div id="tempat" class="kosakata-category" style="display:none"></div>
+    <div id="sehari" class="kosakata-category" style="display:none"></div>
+    <div id="kerja" class="kosakata-category" style="display:none"></div>
+    <div id="sifat" class="kosakata-category" style="display:none"></div>
+  </section>
+
+  <section id="quizSec">
+    <h2>Kuis — Pilihan Ganda & Tes Menulis</h2>
+    <div class="quiz-controls">
+      <button class="mute-btn" id="quizMuteBtn" onclick="toggleQuizMute()">🔇 Suara Kuis</button>
+    </div>
+
+    <div style="text-align:center; margin-bottom:10px;">
+      <label>Jumlah Soal: <input type="number" id="quizCount" value="10" min="1" max="200" /></label>
+      &nbsp;&nbsp;
+      <label>Mode:
+        <select id="quizMode">
+          <option value="choice">Pilihan Ganda</option>
+          <option value="writing">Tes Menulis</option>
+        </select>
+      </label>
+      &nbsp;&nbsp;
+      <label id="labelWriteType" style="display:inline-block;">
+        Tulis:
+        <select id="writeType">
+          <option value="romaji">Romaji (e.g. ka)</option>
+          <option value="japanese">Japanese (ketik kana/kanji)</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="quiz-box">
+      <div id="quizQuestion">Klik "Mulai Kuis"</div>
+      <div id="quizOptions" style="margin-top:12px;"></div>
+
+      <div id="quizWrite" style="margin-top:12px; display:none;">
+        <input type="text" id="quizInput" placeholder="Ketik jawaban di sini..." />
+        <div style="margin-top:8px;">
+          <button class="quiz-btn" onclick="submitWritten()">Periksa Jawaban</button>
+          <button class="quiz-btn" onclick="skipQuestion()">Lewati</button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <button class="quiz-btn" onclick="startQuiz()">Mulai Kuis</button>
+        <button class="quiz-btn" onclick="endQuiz()">Selesai Dulu</button>
+      </div>
+
+      <div id="quizResult" style="margin-top:10px; font-weight:bold;"></div>
+      <div id="quizProgress" style="margin-top:6px;color:#555;"></div>
+    </div>
+  </section>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+let audioCtx = null;
+let bgGain = null;
+let bgOsc1 = null, bgOsc2 = null, bgLfo = null;
+let musicOn = true;
+let quizSoundMuted = false;
+
+function ensureAudio(){
+  if(!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if(!bgGain){
+    bgGain = audioCtx.createGain();
+    bgGain.gain.value = 0.0;
+    bgGain.connect(audioCtx.destination);
+  }
+}
+
+function startAmbientMusic(){
+  try{
+    ensureAudio();
+    if(bgOsc1) return; 
+    const now = audioCtx.currentTime;
+    bgOsc1 = audioCtx.createOscillator();
+    bgOsc2 = audioCtx.createOscillator();
+    bgOsc1.type = 'sine';
+    bgOsc2.type = 'triangle';
+    bgOsc1.frequency.value = 220; 
+    bgOsc2.frequency.value = 330; 
+    const g1 = audioCtx.createGain();
+    const g2 = audioCtx.createGain();
+    g1.gain.value = 0.1; 
+    g2.gain.value = 0.05;
+    bgLfo = audioCtx.createOscillator();
+    bgLfo.type = 'sine';
+    bgLfo.frequency.value = 0.12;
+    const lfoGain = audioCtx.createGain();
+    lfoGain.gain.value = 0.0015;
+
+    bgOsc1.connect(g1); g1.connect(bgGain);
+    bgOsc2.connect(g2); g2.connect(bgGain);
+
+    bgLfo.connect(lfoGain);
+    lfoGain.connect(g1.gain);
+    lfoGain.connect(g2.gain);
+
+    bgOsc1.start(now);
+    bgOsc2.start(now);
+    bgLfo.start(now);
+    bgGain.gain.cancelScheduledValues(now);
+    bgGain.gain.setValueAtTime(0.0, now);
+    bgGain.gain.linearRampToValueAtTime(0.09, now + 6.0);
+    musicOn = true;
+    updateMusicButton();
+  }catch(e){ console.warn('startAmbientMusic failed', e); }
+}
+
+function stopAmbientMusic(){
+  try{
+    if(!bgOsc1 && !bgOsc2) return;
+    const now = audioCtx.currentTime;
+    bgGain.gain.cancelScheduledValues(now);
+    bgGain.gain.setValueAtTime(bgGain.gain.value, now);
+    bgGain.gain.linearRampToValueAtTime(0.0, now + 1.2);
+    setTimeout(()=> {
+      try{
+        if(bgOsc1){ bgOsc1.stop(); bgOsc1.disconnect(); bgOsc1 = null; }
+        if(bgOsc2){ bgOsc2.stop(); bgOsc2.disconnect(); bgOsc2 = null; }
+        if(bgLfo){ bgLfo.stop(); bgLfo.disconnect(); bgLfo = null; }
+      }catch(e){}
+    }, 1400);
+    musicOn = false;
+    updateMusicButton();
+  }catch(e){ console.warn('stopAmbientMusic failed', e); }
+}
+
+function toggleMusic(){
+  try{
+    if(!audioCtx) ensureAudio();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    if(musicOn) stopAmbientMusic(); else startAmbientMusic();
+  }catch(e){ console.warn('toggleMusic', e); }
+}
+
+function updateMusicButton(){
+  const btn = document.getElementById('musicBtn');
+  if(!btn) return;
+  btn.innerText = musicOn ? '🔈 Musik (On)' : '🔇 Musik (Off)';
+}
+
+function playPluck(){
+  if (quizSoundMuted) return; 
+  try{
+    ensureAudio();
+    const now = audioCtx.currentTime;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(660, now);
+    o.frequency.exponentialRampToValueAtTime(240, now + 0.18);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.16, now + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(now); o.stop(now + 0.7);
+  }catch(e){}
+}
+
+function playBell(){
+  if (quizSoundMuted) return; 
+  try{
+    ensureAudio();
+    const now = audioCtx.currentTime;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(880, now);
+    o.frequency.exponentialRampToValueAtTime(660, now + 0.8);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.19, now + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 1.6);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(now); o.stop(now + 1.7);
+  }catch(e){}
+}
+
+function toggleQuizMute() {
+  quizSoundMuted = !quizSoundMuted;
+  const muteBtn = document.getElementById('quizMuteBtn');
+  
+  if (quizSoundMuted) {
+    muteBtn.innerHTML = '🔊 Suara Kuis';
+    muteBtn.classList.add('muted');
+    showToast('🔇 Suara kuis dimatikan');
+  } else {
+    muteBtn.innerHTML = '🔇 Suara Kuis';
+    muteBtn.classList.remove('muted');
+    showToast('🔊 Suara kuis diaktifkan');
+  }
+}
+
+window.addEventListener('error', function (e) {
+  try { console.error('Runtime error caught:', e.message, e.error); } catch (ex) {}
+  try { alert('Terjadi error: '+(e && e.message ? e.message : 'Unknown error')+"\nCek konsol untuk detail."); } catch (ex) {}
+});
+window.addEventListener('unhandledrejection', function (ev) {
+  try { console.error('Unhandled promise rejection:', ev.reason); } catch (ex) {}
+});
+
+function getBestJPVoice() {
+  const voices = speechSynthesis.getVoices();
+  let v = voices.find(x => x.lang && x.lang.toLowerCase().startsWith('ja') && x.name.toLowerCase().includes('google'));
+  if (!v) v = voices.find(x => x.lang && x.lang.toLowerCase().startsWith('ja'));
+  if (!v) v = voices.find(x => x.lang && x.lang.toLowerCase().includes('japanese'));
+  return v || null;
+}
+let cachedJPVoice = null;
+function playSound(text, lang="ja-JP") {
+  if (quizSoundMuted) return;
+  if ('speechSynthesis' in window) {
+    try{
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      if (cachedJPVoice) u.voice = cachedJPVoice;
+      else {
+        const jp = getBestJPVoice();
+        if (jp) { cachedJPVoice = jp; u.voice = jp; }
+      }
+      u.pitch = 1.0; u.rate = 0.95; u.volume = 1.0;
+      speechSynthesis.speak(u);
+      try{ playPluck(); }catch(e){}
+      return;
+    }catch(e){}
+  }
+  try{ playPluck(); }catch(e){}
+}
+const hiragana=[
+  {k:'あ',r:'a'},{k:'い',r:'i'},{k:'う',r:'u'},{k:'え',r:'e'},{k:'お',r:'o'},
+  {k:'か',r:'ka'},{k:'き',r:'ki'},{k:'く',r:'ku'},{k:'け',r:'ke'},{k:'こ',r:'ko'},
+  {k:'さ',r:'sa'},{k:'し',r:'shi'},{k:'す',r:'su'},{k:'せ',r:'se'},{k:'そ',r:'so'},
+  {k:'た',r:'ta'},{k:'ち',r:'chi'},{k:'つ',r:'tsu'},{k:'て',r:'te'},{k:'と',r:'to'},
+  {k:'な',r:'na'},{k:'に',r:'ni'},{k:'ぬ',r:'nu'},{k:'ね',r:'ne'},{k:'の',r:'no'},
+  {k:'は',r:'ha'},{k:'ひ',r:'hi'},{k:'ふ',r:'fu'},{k:'へ',r:'he'},{k:'ほ',r:'ho'},
+  {k:'ま',r:'ma'},{k:'み',r:'mi'},{k:'む',r:'mu'},{k:'め',r:'me'},{k:'も',r:'mo'},
+  {k:'や',r:'ya'},{k:'ゆ',r:'yu'},{k:'よ',r:'yo'},
+  {k:'ら',r:'ra'},{k:'り',r:'ri'},{k:'る',r:'ru'},{k:'れ',r:'re'},{k:'ろ',r:'ro'},
+  {k:'わ',r:'wa'},{k:'を',r:'wo'},{k:'ん',r:'n'},
+  {k:'が',r:'ga'},{k:'ぎ',r:'gi'},{k:'ぐ',r:'gu'},{k:'げ',r:'ge'},{k:'ご',r:'go'},
+  {k:'ざ',r:'za'},{k:'じ',r:'ji'},{k:'ず',r:'zu'},{k:'ぜ',r:'ze'},{k:'ぞ',r:'zo'},
+  {k:'だ',r:'da'},{k:'ぢ',r:'ji'},{k:'づ',r:'zu'},{k:'で',r:'de'},{k:'ど',r:'do'},
+  {k:'ば',r:'ba'},{k:'び',r:'bi'},{k:'ぶ',r:'bu'},{k:'べ',r:'be'},{k:'ぼ',r:'bo'},
+  {k:'ぱ',r:'pa'},{k:'ぴ',r:'pi'},{k:'ぷ',r:'pu'},{k:'ぺ',r:'pe'},{k:'ぽ',r:'po'},
+  {k:'きゃ',r:'kya'},{k:'きゅ',r:'kyu'},{k:'きょ',r:'kyo'},
+  {k:'しゃ',r:'sha'},{k:'しゅ',r:'shu'},{k:'しょ',r:'sho'},
+  {k:'ちゃ',r:'cha'},{k:'ちゅ',r:'chu'},{k:'ちょ',r:'cho'},
+  {k:'にゃ',r:'nya'},{k:'にゅ',r:'nyu'},{k:'にょ',r:'nyo'},
+  {k:'ひゃ',r:'hya'},{k:'ひゅ',r:'hyu'},{k:'ひょ',r:'hyo'},
+  {k:'みゃ',r:'mya'},{k:'みゅ',r:'myu'},{k:'みょ',r:'myo'},
+  {k:'りゃ',r:'rya'},{k:'りゅ',r:'ryu'},{k:'りょ',r:'ryo'},
+  {k:'ぎゃ',r:'gya'},{k:'ぎゅ',r:'gyu'},{k:'ぎょ',r:'gyo'},
+  {k:'じゃ',r:'ja'},{k:'じゅ',r:'ju'},{k:'じょ',r:'jo'},
+  {k:'ぢゃ',r:'ja'},{k:'ぢゅ',r:'ju'},{k:'ぢょ',r:'jo'},
+  {k:'びゃ',r:'bya'},{k:'びゅ',r:'byu'},{k:'びょ',r:'byo'},
+  {k:'ぴゃ',r:'pya'},{k:'ぴゅ',r:'pyu'},{k:'ぴょ',r:'pyo'}
+];
+const katakana=[
+  {k:'ア',r:'a'},{k:'イ',r:'i'},{k:'ウ',r:'u'},{k:'エ',r:'e'},{k:'オ',r:'o'},
+  {k:'カ',r:'ka'},{k:'キ',r:'ki'},{k:'ク',r:'ku'},{k:'ケ',r:'ke'},{k:'コ',r:'ko'},
+  {k:'サ',r:'sa'},{k:'シ',r:'shi'},{k:'ス',r:'su'},{k:'セ',r:'se'},{k:'ソ',r:'so'},
+  {k:'タ',r:'ta'},{k:'チ',r:'chi'},{k:'ツ',r:'tsu'},{k:'テ',r:'te'},{k:'ト',r:'to'},
+  {k:'ナ',r:'na'},{k:'ニ',r:'ni'},{k:'ヌ',r:'nu'},{k:'ネ',r:'ne'},{k:'ノ',r:'no'},
+  {k:'ハ',r:'ha'},{k:'ヒ',r:'hi'},{k:'フ',r:'fu'},{k:'ヘ',r:'he'},{k:'ホ',r:'ho'},
+  {k:'マ',r:'ma'},{k:'ミ',r:'mi'},{k:'ム',r:'mu'},{k:'メ',r:'me'},{k:'モ',r:'mo'},
+  {k:'ヤ',r:'ya'},{k:'ユ',r:'yu'},{k:'ヨ',r:'yo'},
+  {k:'ラ',r:'ra'},{k:'リ',r:'ri'},{k:'ル',r:'ru'},{k:'レ',r:'re'},{k:'ロ',r:'ro'},
+  {k:'ワ',r:'wa'},{k:'ヲ',r:'wo'},{k:'ン',r:'n'},
+  {k:'ガ',r:'ga'},{k:'ギ',r:'gi'},{k:'グ',r:'gu'},{k:'ゲ',r:'ge'},{k:'ゴ',r:'go'},
+  {k:'ザ',r:'za'},{k:'ジ',r:'ji'},{k:'ズ',r:'zu'},{k:'ゼ',r:'ze'},{k:'ゾ',r:'zo'},
+  {k:'ダ',r:'da'},{k:'ヂ',r:'ji'},{k:'ヅ',r:'zu'},{k:'デ',r:'de'},{k:'ド',r:'do'},
+  {k:'バ',r:'ba'},{k:'ビ',r:'bi'},{k:'ブ',r:'bu'},{k:'ベ',r:'be'},{k:'ボ',r:'bo'},
+  {k:'パ',r:'pa'},{k:'ピ',r:'pi'},{k:'プ',r:'pu'},{k:'ペ',r:'pe'},{k:'ポ',r:'po'},
+  {k:'キャ',r:'kya'},{k:'キュ',r:'kyu'},{k:'キョ',r:'kyo'},
+  {k:'シャ',r:'sha'},{k:'シュ',r:'shu'},{k:'ショ',r:'sho'},
+  {k:'チャ',r:'cha'},{k:'チュ',r:'chu'},{k:'チョ',r:'cho'},
+  {k:'ニャ',r:'nya'},{k:'ニュ',r:'nyu'},{k:'ニョ',r:'nyo'},
+  {k:'ヒャ',r:'hya'},{k:'ヒュ',r:'hyu'},{k:'ヒョ',r:'hyo'},
+  {k:'ミャ',r:'mya'},{k:'ミュ',r:'myu'},{k:'ミョ',r:'myo'},
+  {k:'リャ',r:'rya'},{k:'リュ',r:'ryu'},{k:'リョ',r:'ryo'},
+  {k:'ギャ',r:'gya'},{k:'ギュ',r:'gyu'},{k:'ギョ',r:'gyo'},
+  {k:'ジャ',r:'ja'},{k:'ジュ',r:'ju'},{k:'ジョ',r:'jo'},
+  {k:'ヂャ',r:'ja'},{k:'ヂュ',r:'ju'},{k:'ヂョ',r:'jo'},
+  {k:'ビャ',r:'bya'},{k:'ビュ',r:'byu'},{k:'ビョ',r:'byo'},
+  {k:'ピャ',r:'pya'},{k:'ピュ',r:'pyu'},{k:'ピョ',r:'pyo'}
+];
+const kosakataData = {
+  angka:[
+    {jp:"一",id:"Satu"},{jp:"二",id:"Dua"},{jp:"三",id:"Tiga"},{jp:"四",id:"Empat"},{jp:"五",id:"Lima"},
+    {jp:"六",id:"Enam"},{jp:"七",id:"Tujuh"},{jp:"八",id:"Delapan"},{jp:"九",id:"Sembilan"},{jp:"十",id:"Sepuluh"},
+    {jp:"十一",id:"Sebelas"},{jp:"十二",id:"Dua Belas"},{jp:"十三",id:"Tiga Belas"},{jp:"十四",id:"Empat Belas"},{jp:"十五",id:"Lima Belas"},
+    {jp:"十六",id:"Enam Belas"},{jp:"十七",id:"Tujuh Belas"},{jp:"十八",id:"Delapan Belas"},{jp:"十九",id:"Sembilan Belas"},{jp:"二十",id:"Dua Puluh"},
+    {jp:"二十一",id:"Dua Puluh Satu"},{jp:"二十二",id:"Dua Puluh Dua"},{jp:"二十三",id:"Dua Puluh Tiga"},{jp:"二十四",id:"Dua Puluh Empat"},{jp:"二十五",id:"Dua Puluh Lima"},
+    {jp:"二十六",id:"Dua Puluh Enam"},{jp:"二十七",id:"Dua Puluh Tujuh"},{jp:"二十八",id:"Dua Puluh Delapan"},{jp:"二十九",id:"Dua Puluh Sembilan"},{jp:"三十",id:"Tiga Puluh"},
+    {jp:"三十一",id:"Tiga Puluh Satu"},{jp:"三十二",id:"Tiga Puluh Dua"},{jp:"三十三",id:"Tiga Puluh Tiga"},{jp:"三十四",id:"Tiga Puluh Empat"},{jp:"三十五",id:"Tiga Puluh Lima"},
+    {jp:"三十六",id:"Tiga Puluh Enam"},{jp:"三十七",id:"Tiga Puluh Tujuh"},{jp:"三十八",id:"Tiga Puluh Delapan"},{jp:"三十九",id:"Tiga Puluh Sembilan"},{jp:"四十",id:"Empat Puluh"},
+    {jp:"四十一",id:"Empat Puluh Satu"},{jp:"四十二",id:"Empat Puluh Dua"},{jp:"四十三",id:"Empat Puluh Tiga"},{jp:"四十四",id:"Empat Puluh Empat"},{jp:"四十五",id:"Empat Puluh Lima"},
+    {jp:"四十六",id:"Empat Puluh Enam"},{jp:"四十七",id:"Empat Puluh Tujuh"},{jp:"四十八",id:"Empat Puluh Delapan"},{jp:"四十九",id:"Empat Puluh Sembilan"},{jp:"五十",id:"Lima Puluh"}
+  ],
+  warna:[
+    {jp:"赤",id:"Merah"},{jp:"青",id:"Biru"},{jp:"緑",id:"Hijau"},{jp:"黄",id:"Kuning"},{jp:"黒",id:"Hitam"},
+    {jp:"白",id:"Putih"},{jp:"紫",id:"Ungu"},{jp:"ピンク",id:"Merah Muda"},{jp:"橙",id:"Oranye"},{jp:"茶色",id:"Coklat"},
+    {jp:"灰色",id:"Abu-abu"},{jp:"水色",id:"Biru Muda"},{jp:"金色",id:"Emas"},{jp:"銀色",id:"Perak"},{jp:"ベージュ",id:"Beige"},
+    {jp:"紺",id:"Navy"},{jp:"黄緑",id:"Hijau Kuning"},{jp:"薄紫",id:"Ungu Muda"},{jp:"赤紫",id:"Magenta"},{jp:"青緑",id:"Cyan"},
+    {jp:"桃色",id:"Peach"},{jp:"深緑",id:"Hijau Tua"},{jp:"黒紫",id:"Hitam Ungu"},{jp:"クリーム",id:"Cream"},{jp:"ライム",id:"Lime"},
+    {jp:"藍色",id:"Indigo"},{jp:"橙赤",id:"Oranye Merah"},{jp:"茶紅",id:"Coklat Merah"},{jp:"空色",id:"Sky Blue"},{jp:"藤色",id:"Wisteria"},
+    {jp:"青灰",id:"Biru Abu"},{jp:"朱色",id:"Vermilion"},{jp:"茜色",id:"Merah Tua"},{jp:"桜色",id:"Sakura"},{jp:"若草色",id:"Hijau Muda"},
+    {jp:"鶯色",id:"Olive"},{jp:"菫色",id:"Violet"},{jp:"紺碧",id:"Deep Blue"},{jp:"栗色",id:"Chestnut"},{jp:"鼠色",id:"Grey"},
+    {jp:"海色",id:"Sea Blue"},{jp:"緋色",id:"Scarlet"},{jp:"琥珀色",id:"Amber"},{jp:"珊瑚色",id:"Coral"},{jp:"藍鼠",id:"Indigo Grey"},
+    {jp:"萌黄",id:"Yellow Green"},{jp:"浅葱色",id:"Light Teal"},{jp:"浅紫",id:"Light Purple"},{jp:"群青",id:"Ultramarine"},{jp:"紅色",id:"Red"}
+  ],
+  makanan:[
+    {jp:"ご飯",id:"Nasi"},{jp:"パン",id:"Roti"},{jp:"魚",id:"Ikan"},{jp:"肉",id:"Daging"},{jp:"野菜",id:"Sayur"},
+    {jp:"果物",id:"Buah"},{jp:"卵",id:"Telur"},{jp:"牛乳",id:"Susu"},{jp:"チーズ",id:"Keju"},{jp:"お茶",id:"Teh"},
+    {jp:"コーヒー",id:"Kopi"},{jp:"水",id:"Air"},{jp:"味噌汁",id:"Sup Miso"},{jp:"ラーメン",id:"Ramen"},{jp:"寿司",id:"Sushi"},
+    {jp:"天ぷら",id:"Tempura"},{jp:"そば",id:"Soba"},{jp:"うどん",id:"Udon"},{jp:"焼き鳥",id:"Yakitori"},{jp:"カレー",id:"Kari"},
+    {jp:"パンケーキ",id:"Pancake"},{jp:"ケーキ",id:"Kue"},{jp:"アイスクリーム",id:"Es Krim"},{jp:"ジュース",id:"Jus"},{jp:"魚介",id:"Seafood"},
+    {jp:"サラダ",id:"Salad"},{jp:"味噌",id:"Miso"},{jp:"醤油",id:"Kecap Jepang"},{jp:"海苔",id:"Nori"},{jp:"納豆",id:"Natto"},
+    {jp:"豆腐",id:"Tahu"},{jp:"鶏肉",id:"Daging Ayam"},{jp:"豚肉",id:"Daging Babi"},{jp:"牛肉",id:"Daging Sapi"},{jp:"ソーセージ",id:"Sosis"},
+    {jp:"ハム",id:"Ham"},{jp:"ヨーグルト",id:"Yogurt"},{jp:"バター",id:"Mentega"},{jp:"醤油ラーメン",id:"Ramen Kecap"},{jp:"味噌ラーメン",id:"Ramen Miso"},
+    {jp:"お好み焼き",id:"Okonomiyaki"},{jp:"たこ焼き",id:"Takoyaki"},{jp:"カツ丼",id:"Katsudon"},{jp:"弁当",id:"Bento"},{jp:"おにぎり",id:"Onigiri"},
+    {jp:"煮物",id:"Nimono"},{jp:"焼き魚",id:"Ikan Bakar"},{jp:"刺身",id:"Sashimi"},{jp:"鍋",id:"Nabe"},{jp:"お菓子",id:"Camilan"}
+  ],
+  salam:[
+    {jp:"こんにちは",id:"Halo"},{jp:"おはよう",id:"Selamat Pagi"},{jp:"こんばんは",id:"Selamat Malam"},{jp:"さようなら",id:"Selamat Tinggal"},{jp:"ありがとう",id:"Terima Kasih"},
+    {jp:"すみません",id:"Permisi/Maaf"},{jp:"お願いします",id:"Tolong"},{jp:"はい",id:"Ya"},{jp:"いいえ",id:"Tidak"},{jp:"おやすみ",id:"Selamat Tidur"},
+    {jp:"おめでとう",id:"Selamat"},{jp:"はじめまして",id:"Senang Bertemu"},{jp:"よろしく",id:"Senang Bekerja Sama"},{jp:"どういたしまして",id:"Sama-sama"},{jp:"ごめんなさい",id:"Maaf"},
+    {jp:"いってきます",id:"Saya Pergi"},{jp:"いってらっしゃい",id:"Hati-hati"},{jp:"ただいま",id:"Saya Pulang"},{jp:"おかえり",id:"Selamat Pulang"},{jp:"いただきます",id:"Selamat Makan"},
+    {jp:"ごちそうさま",id:"Terima Kasih Makanannya"},{jp:"もしもし",id:"Halo (telepon)"},{jp:"お大事に",id:"Semoga Cepat Sembuh"},{jp:"お久しぶり",id:"Lama Tidak Bertemu"},{jp:"よろしくお願いします",id:"Mohon Kerjasamanya"},
+    {jp:"失礼します",id:"Permisi"},{jp:"お疲れ様",id:"Kerja Bagus"},{jp:"頑張って",id:"Semangat"},{jp:"気をつけて",id:"Hati-hati"},{jp:"行ってきます",id:"Saya Berangkat"},
+    {jp:"行ってらっしゃい",id:"Hati-hati"},{jp:"ただいま戻りました",id:"Saya Kembali"},{jp:"ごめんください",id:"Permisi Masuk"},{jp:"いかがですか",id:"Bagaimana?"},{jp:"お久しぶりです",id:"Lama Tidak Bertemu"},
+    {jp:"おめでとうございます",id:"Selamat (resmi)"},{jp:"お誕生日おめでとう",id:"Selamat Ulang Tahun"},{jp:"お祝いします",id:"Selamat"},{jp:"よろしくね",id:"Senang Berkenalan"},{jp:"失礼しました",id:"Maafkan Saya"},
+    {jp:"お邪魔します",id:"Permisi Mengganggu"},{jp:"ご機嫌いかが",id:"Apa Kabar"},{jp:"どうぞ",id:"Silahkan"},{jp:"いらっしゃいませ",id:"Selamat Datang"},{jp:"お幸せに",id:"Semoga Bahagia"}
+  ],
+  kegiatan:[
+    {jp:"走る",id:"Berlari"},{jp:"歩く",id:"Berjalan"},{jp:"泳ぐ",id:"Berenang"},{jp:"読む",id:"Membaca"},{jp:"書く",id:"Menulis"},
+    {jp:"食べる",id:"Makan"},{jp:"飲む",id:"Minum"},{jp:"寝る",id:"Tidur"},{jp:"起きる",id:"Bangun"},{jp:"遊ぶ",id:"Bermain"},
+    {jp:"歌う",id:"Bernyanyi"},{jp:"踊る",id:"Menari"},{jp:"聞く",id:"Mendengar"},{jp:"話す",id:"Berbicara"},{jp:"見る",id:"Melihat"},
+    {jp:"掃除する",id:"Membersihkan"},{jp:"洗う",id:"Mencuci"},{jp:"買う",id:"Membeli"},{jp:"売る",id:"Menjual"},{jp:"作る",id:"Membuat"},
+    {jp:"描く",id:"Menggambar"},{jp:"撮る",id:"Mengambil Foto"},{jp:"勉強する",id:"Belajar"},{jp:"働く",id:"Bekerja"},{jp:"休む",id:"Beristirahat"},
+    {jp:"運転する",id:"Mengemudi"},{jp:"掃除機をかける",id:"Menyedot Debu"},{jp:"料理する",id:"Memasak"},{jp:"洗濯する",id:"Mencuci Pakaian"},{jp:"運動する",id:"Berolahraga"},
+    {jp:"手伝う",id:"Membantu"},{jp:"話し合う",id:"Diskusi"},{jp:"聞き取る",id:"Mendengarkan dengan Fokus"},{jp:"歩き回る",id:"Berjalan-jalan"},{jp:"泳ぎ回る",id:"Berenang di Sekitar"},
+    {jp:"集める",id:"Mengumpulkan"},{jp:"探す",id:"Mencari"},{jp:"登る",id:"Mendaki"},{jp:"降りる",id:"Turun"},{jp:"飛ぶ",id:"Terbang"},
+    {jp:"運ぶ",id:"Mengangkut"},{jp:"磨く",id:"Menggosok"},{jp:"掃く",id:"Menyapu"},{jp:"飾る",id:"Menghias"},{jp:"描写する",id:"Menjabarkan"},
+    {jp:"遊びに行く",id:"Pergi Bermain"},{jp:"散歩する",id:"Jalan-jalan santai"},{jp:"練習する",id:"Latihan"},{jp:"試す",id:"Mencoba"},{jp:"説明する",id:"Menjelaskan"}
+  ],
+  alat:[
+    {jp:"ペン",id:"Pulpen"},{jp:"ノート",id:"Buku Catatan"},{jp:"鉛筆",id:"Pensil"},{jp:"消しゴム",id:"Penghapus"},{jp:"定規",id:"Penggaris"},
+    {jp:"はさみ",id:"Gunting"},{jp:"のり",id:"Lem"},{jp:"カッター",id:"Cutter"},{jp:"筆",id:"Kuasa"},{jp:"紙",id:"Kertas"},
+    {jp:"机",id:"Meja"},{jp:"椅子",id:"Kursi"},{jp:"時計",id:"Jam"},{jp:"電話",id:"Telepon"},{jp:"鍵",id:"Kunci"},
+    {jp:"バッグ",id:"Tas"},{jp:"財布",id:"Dompet"},{jp:"傘",id:"Payung"},{jp:"眼鏡",id:"Kacamata"},{jp:"帽子",id:"Topi"},
+    {jp:"靴",id:"Sepatu"},{jp:"服",id:"Pakaian"},{jp:"時計",id:"Jam Tangan"},{jp:"カメラ",id:"Kamera"},{jp:"自転車",id:"Sepeda"},
+    {jp:"車",id:"Mobil"},{jp:"バイク",id:"Motor"},{jp:"電卓",id:"Kalkulator"},{jp:"パソコン",id:"Komputer"},{jp:"イヤホン",id:"Earphone"},
+    {jp:"スピーカー",id:"Speaker"},{jp:"マイク",id:"Mikrofon"},{jp:"照明",id:"Lampu"},{jp:"扇風機",id:"Kipas Angin"},{jp:"冷蔵庫",id:"Kulkas"},
+    {jp:"電子レンジ",id:"Microwave"},{jp:"洗濯機",id:"Mesin Cuci"},{jp:"掃除機",id:"Vacuum"},{jp:"時計",id:"Jam Dinding"},{jp:"電球",id:"Bohlam"},
+    {jp:"工具",id:"Alat Perkakas"},{jp:"ドライバー",id:"Obeng"},{jp:"ハンマー",id:"Palu"},{jp:"釘",id:"Paku"},{jp:"ドリル",id:"Bor"},
+    {jp:"縄",id:"Tali"},{jp:"鎖",id:"Rantai"},{jp:"箱",id:"Kotak"},{jp:"袋",id:"Tas/Kantong"},{jp:"テーブル",id:"Meja"}
+  ],
+  tempat:[
+    {jp:"家",id:"Rumah"},{jp:"学校",id:"Sekolah"},{jp:"公園",id:"Taman"},{jp:"図書館",id:"Perpustakaan"},{jp:"病院",id:"Rumah Sakit"},
+    {jp:"駅",id:"Stasiun"},{jp:"空港",id:"Bandara"},{jp:"店",id:"Toko"},{jp:"レストラン",id:"Restoran"},{jp:"ホテル",id:"Hotel"},
+    {jp:"映画館",id:"Bioskop"},{jp:"銀行",id:"Bank"},{jp:"郵便局",id:"Kantor Pos"},{jp:"市役所",id:"Balai Kota"},{jp:"博物館",id:"Museum"},
+    {jp:"神社",id:"Kuil Shinto"},{jp:"寺",id:"Vihara/Temple"},{jp:"川",id:"Sungai"},{jp:"山",id:"Gunung"},{jp:"海",id:"Laut"},
+    {jp:"空",id:"Langit"},{jp:"森",id:"Hutan"},{jp:"道路",id:"Jalan"},{jp:"橋",id:"Jembatan"},{jp:"庭",id:"Taman Rumah"},
+    {jp:"プール",id:"Kolam Renang"},{jp:"遊園地",id:"Taman Hiburan"},{jp:"港",id:"Pelabuhan"},{jp:"市場",id:"Pasar"},{jp:"駅前",id:"Depan Stasiun"},
+    {jp:"駐車場",id:"Tempat Parkir"},{jp:"公民館",id:"Balai Warga"},{jp:"劇場",id:"Teater"},{jp:"動物園",id:"Kebun Binatang"},{jp:"植物園",id:"Taman Botani"},
+    {jp:"川岸",id:"Tepi Sungai"},{jp:"浜辺",id:"Pantai"},{jp:"山頂",id:"Puncak Gunung"},{jp:"森の中",id:"Dalam Hutan"},{jp:"広場",id:"Lapangan"},
+    {jp:"通り",id:"Jalanan"},{jp:"路地",id:"Gang"},{jp:"坂",id:"Bukit/Tanjakan"},{jp:"橋の上",id:"Di Atas Jembatan"},{jp:"公園の中",id:"Di Taman"}
+  ],
+  sehari:[
+    {jp:"朝",id:"Pagi"},{jp:"昼",id:"Siang"},{jp:"夕方",id:"Sore"},{jp:"夜",id:"Malam"},{jp:"今",id:"Sekarang"},
+    {jp:"昨日",id:"Kemarin"},{jp:"今日",id:"Hari Ini"},{jp:"明日",id:"Besok"},{jp:"時間",id:"Waktu"},{jp:"分",id:"Menit"},
+    {jp:"秒",id:"Detik"},{jp:"週",id:"Minggu"},{jp:"月",id:"Bulan"},{jp:"年",id:"Tahun"},{jp:"朝食",id:"Sarapan"},
+    {jp:"昼食",id:"Makan Siang"},{jp:"夕食",id:"Makan Malam"},{jp:"仕事",id:"Pekerjaan"},{jp:"勉強",id:"Belajar"},{jp:"休み",id:"Istirahat"},
+    {jp:"学校",id:"Sekolah"},{jp:"寝る",id:"Tidur"},{jp:"起きる",id:"Bangun"},{jp:"遊ぶ",id:"Bermain"},{jp:"運動",id:"Olahraga"},
+    {jp:"掃除",id:"Membersihkan"},{jp:"洗濯",id:"Mencuci"},{jp:"買い物",id:"Belanja"},{jp:"旅行",id:"Bepergian"},{jp:"休暇",id:"Libur"},
+    {jp:"天気",id:"Cuaca"},{jp:"雨",id:"Hujan"},{jp:"雪",id:"Salju"},{jp:"風",id:"Angin"},{jp:"晴れ",id:"Cerah"},
+    {jp:"曇り",id:"Mendung"},{jp:"忙しい",id:"Sibuk"},{jp:"暇",id:"Luang"},{jp:"楽しい",id:"Menyenangkan"},{jp:"疲れた",id:"Lelah"},
+    {jp:"朝の散歩",id:"Jalan Pagi"},{jp:"昼寝",id:"Tidur Siang"},{jp:"夕焼け",id:"Senja"},{jp:"夜更かし",id:"Begadang"},{jp:"毎日",id:"Setiap Hari"},
+    {jp:"毎週",id:"Setiap Minggu"},{jp:"毎月",id:"Setiap Bulan"},{jp:"毎年",id:"Setiap Tahun"},{jp:"週末",id:"Akhir Pekan"},{jp:"休日",id:"Hari Libur"}
+  ],
+  kerja:[
+    {jp:"会社",id:"Perusahaan"},{jp:"仕事",id:"Pekerjaan"},{jp:"会議",id:"Rapat"},{jp:"上司",id:"Atasan"},{jp:"同僚",id:"Rekan Kerja"},
+    {jp:"部長",id:"Kepala Bagian"},{jp:"社員",id:"Karyawan"},{jp:"顧客",id:"Pelanggan"},{jp:"報告",id:"Laporan"},{jp:"提出",id:"Penyerahan"},
+    {jp:"締切",id:"Deadline"},{jp:"電話",id:"Telepon"},{jp:"メール",id:"Email"},{jp:"文書",id:"Dokumen"},{jp:"資料",id:"Materi"},
+    {jp:"営業",id:"Penjualan"},{jp:"開発",id:"Pengembangan"},{jp:"会計",id:"Akuntansi"},{jp:"人事",id:"HR"},{jp:"企画",id:"Perencanaan"},
+    {jp:"戦略",id:"Strategi"},{jp:"目標",id:"Target"},{jp:"達成",id:"Pencapaian"},{jp:"報酬",id:"Gaji"},{jp:"昇進",id:"Promosi"},
+    {jp:"出張",id:"Perjalanan Dinas"},{jp:"研修",id:"Training"},{jp:"評価",id:"Evaluasi"},{jp:"業務",id:"Operasional"},{jp:"責任",id:"Tanggung Jawab"},
+    {jp:"契約",id:"Kontrak"},{jp:"面接",id:"Wawancara"},{jp:"履歴書",id:"CV"},{jp:"資料作成",id:"Membuat Materi"},{jp:"交渉",id:"Negosiasi"},
+    {jp:"会計処理",id:"Proses Akuntansi"},{jp:"プロジェクト",id:"Proyek"},{jp:"進捗",id:"Kemajuan"},{jp:"報告書",id:"Laporan Tertulis"},{jp:"打ち合わせ",id:"Pertemuan"},
+    {jp:"締結",id:"Penandatanganan"},{jp:"業績",id:"Prestasi"},{jp:"企画書",id:"Proposal"},{jp:"人材",id:"Sumber Daya Manusia"},{jp:"管理",id:"Manajemen"},
+    {jp:"改善",id:"Perbaikan"},{jp:"調査",id:"Penelitian"},{jp:"分析",id:"Analisis"},{jp:"企画会議",id:"Rapat Perencanaan"},{jp:"業務改善",id:"Perbaikan Proses"}
+  ],
+  sifat:[
+    {jp:"大きい",id:"Besar"},{jp:"小さい",id:"Kecil"},{jp:"長い",id:"Panjang"},{jp:"短い",id:"Pendek"},{jp:"新しい",id:"Baru"},
+    {jp:"古い",id:"Lama"},{jp:"高い",id:"Tinggi/Mahal"},{jp:"低い",id:"Rendah"},{jp:"速い",id:"Cepat"},{jp:"遅い",id:"Lambat"},
+    {jp:"良い",id:"Baik"},{jp:"悪い",id:"Buruk"},{jp:"強い",id:"Kuat"},{jp:"弱い",id:"Lemah"},{jp:"暑い",id:"Panas"},
+    {jp:"寒い",id:"Dingin"},{jp:"明るい",id:"Terang"},{jp:"暗い",id:"Gelap"},{jp:"美しい",id:"Indah"},{jp:"醜い",id:"Jelek"}
+  ]
+};
+function loadKanaUI() {
+  const hir = document.getElementById('hiragana');
+  const kat = document.getElementById('katakana');
+  hir.innerHTML=''; kat.innerHTML='';
+  hiragana.forEach(h=>{
+    const b = document.createElement('button');
+    b.className='kanaBtn';
+    b.innerText = h.k + "\n" + h.r;
+    b.onclick = ()=> { playSound(h.k); };
+    hir.appendChild(b);
+  });
+  katakana.forEach(h=>{
+    const b = document.createElement('button');
+    b.className='kanaBtn';
+    b.innerText = h.k + "\n" + h.r;
+    b.onclick = ()=> { playSound(h.k); };
+    kat.appendChild(b);
+  });
+}
+
+function loadKosakata(){
+  for(let cat in kosakataData){
+    const container = document.getElementById(cat);
+    if(!container) continue;
+    container.innerHTML = '';
+    kosakataData[cat].forEach(k=>{
+      const card = document.createElement('div');
+      card.className='card';
+      const jpEsc = (k.jp||'').replace(/'/g,"\\'");
+      card.innerHTML = `<div style="font-size:1.2em;"><b>${k.jp}</b></div><div style="margin-top:6px"><small>${k.id}</small></div>
+        <div style="margin-top:8px;"><button onclick="playSound('${jpEsc}')" style="padding:6px 8px;border-radius:6px;border:none;background:linear-gradient(180deg,#7aa66b,#4caf50);color:white;cursor:pointer">▶️ Ucapkan</button></div>`;
+      container.appendChild(card);
+    });
+  }
+}
+
+function filterKosakata(){
+  const q = document.getElementById('kosSearch').value.trim().toLowerCase();
+  document.querySelectorAll('.kosakata-category').forEach(catDiv=>{
+    Array.from(catDiv.children).forEach(card=>{
+      const txt = card.innerText.toLowerCase();
+      card.style.display = (q === '' || txt.indexOf(q) !== -1) ? 'inline-block' : 'none';
+    });
+  });
+}
+
+function showSection(id){
+  try{ playPluck(); }catch(e){}
+  document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showSubKosakata(cat){
+  try{ playPluck(); }catch(e){}
+  document.querySelectorAll('.kosakata-category').forEach(c=>c.style.display='none');
+  const el = document.getElementById(cat);
+  if(el) el.style.display='block';
+  document.getElementById('kosSearch').value='';
+}
+let quizIndex=0, quizScore=0, quizTotal=10, quizCurrent=null;
+
+function startQuiz(){
+  quizTotal = Math.max(1, parseInt(document.getElementById('quizCount').value) || 10);
+  quizIndex = 0; quizScore = 0;
+  document.getElementById('quizResult').innerText='';
+  nextQuestion();
+}
+function nextQuestion(){
+  const mode = document.getElementById('quizMode').value;
+  if(quizIndex >= quizTotal){
+    document.getElementById('quizQuestion').innerText = `Selesai! Skor Anda: ${quizScore}/${quizTotal}`;
+    document.getElementById('quizOptions').innerHTML = '';
+    document.getElementById('quizWrite').style.display = 'none';
+    document.getElementById('quizProgress').innerText = '';
+    try{ playBell(); }catch(e){}
+    return;
+  }
+  quizCurrent = hiragana[Math.floor(Math.random()*hiragana.length)];
+  document.getElementById('quizQuestion').innerHTML = `Huruf apa ini?<br><span style="font-size:2.5em">${quizCurrent.k}</span>`;
+  playSound(quizCurrent.k);
+  document.getElementById('quizProgress').innerText = `Soal ${quizIndex+1} / ${quizTotal}`;
+
+  if(mode === 'choice'){
+    document.getElementById('quizOptions').style.display = 'block';
+    document.getElementById('quizWrite').style.display = 'none';
+    let opts = [quizCurrent.r];
+    while(opts.length < 4){
+      const r = hiragana[Math.floor(Math.random()*hiragana.length)].r;
+      if(!opts.includes(r)) opts.push(r);
+    }
+    opts.sort(()=>Math.random()-0.5);
+    document.getElementById('quizOptions').innerHTML = opts.map(o=>`<button class="quiz-btn" onclick="checkChoice('${o}')">${o}</button>`).join(' ');
+  } else {
+    document.getElementById('quizOptions').style.display = 'none';
+    document.getElementById('quizWrite').style.display = 'block';
+    document.getElementById('quizInput').value = '';
+    document.getElementById('quizInput').focus();
+  }
+}
+
+function checkChoice(selected){
+  const correct = quizCurrent.r;
+  if(selected === correct){
+    quizScore++; showToast('✅ Benar!');
+  } else {
+    showToast(`❌ Salah — Jawaban: ${correct}`);
+  }
+  quizIndex++; setTimeout(nextQuestion, 300);
+}
+
+function submitWritten(){
+  const writeType = document.getElementById('writeType').value;
+  const raw = document.getElementById('quizInput').value.trim();
+  if(raw === '') { showToast('Ketik jawaban terlebih dahulu.'); return; }
+  let isCorrect = false;
+  if(writeType === 'romaji'){
+    isCorrect = raw.toLowerCase() === quizCurrent.r.toLowerCase();
+  } else {
+    isCorrect = raw === quizCurrent.k;
+  }
+  if(isCorrect){
+    quizScore++; showToast('✅ Benar!');
+  } else {
+    const expect = (writeType === 'romaji') ? quizCurrent.r : quizCurrent.k;
+    showToast(`❌ Salah — Jawaban: ${expect}`);
+  }
+  quizIndex++; setTimeout(nextQuestion, 350);
+}
+
+function skipQuestion(){
+  quizIndex++; showToast('⚠️ Soal dilewati.'); setTimeout(nextQuestion, 200);
+}
+
+function endQuiz(){ quizIndex = quizTotal; nextQuestion(); }
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.innerText = msg; t.style.display = 'block';
+  setTimeout(()=>{ t.style.display = 'none'; }, 1600);
+  try{ playPluck(); }catch(e){}
+}
+
+document.addEventListener('change', (e)=>{
+  if(e.target && e.target.id === 'quizMode'){
+    const val = e.target.value;
+    const label = document.getElementById('labelWriteType');
+    if(val === 'writing') label.style.display = 'inline-block';
+    else label.style.display = 'none';
+  }
+});
+
+function spawnLeaf(){
+  const leaf = document.createElement('div');
+  leaf.className = 'leaf';
+  
+  const startLeft = Math.random() * 100; // vw
+  leaf.style.left = startLeft + 'vw';
+  leaf.style.top = (-6 - Math.random()*6) + 'vh';
+  
+  const s = 10 + Math.random()*20;
+  leaf.style.width = s + 'px';
+  leaf.style.height = (s*0.9) + 'px';
+  
+  const dur = 5 + Math.random()*6;
+  leaf.style.animation = `leafFall ${dur}s linear forwards`;
+  leaf.style.transform = `rotate(${Math.random()*180}deg)`;
+  document.body.appendChild(leaf);
+  setTimeout(()=> leaf.remove(), (dur*1000) + 1200);
+}
+
+let leafInterval = null;
+function startLeaves(){
+  if(leafInterval) return;
+  leafInterval = setInterval(()=> {
+    
+    const c = Math.random() < 0.6 ? 1 : (Math.random() < 0.5 ? 2 : 3);
+    for(let i=0;i<c;i++) spawnLeaf();
+  }, 800);
+}
+function stopLeaves(){
+  if(leafInterval){ clearInterval(leafInterval); leafInterval = null; }
+}
+
+
+window.onload = () => {
+  
+  speechSynthesis.onvoiceschanged = () => {
+    const jp = getBestJPVoice();
+    if (jp) cachedJPVoice = jp;
+  };
+  speechSynthesis.getVoices();
+
+  loadKanaUI();
+  loadKosakata();
+  showSubKosakata('angka');
+
+  const qi = document.getElementById('quizInput');
+  const quizModeEl = document.getElementById('quizMode');
+  if(qi){
+    qi.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        try{
+          if(quizModeEl && quizModeEl.value === 'writing') submitWritten();
+        }catch(err){ console.error('submitWritten error', err); }
+      }
+    });
+  }
+
+
+  setTimeout(()=> {
+    const ld = document.getElementById('loading');
+    if(!ld) return;
+    ld.classList.add('hidden');
+    ld.setAttribute('aria-hidden','true');
+    try{ 
+      if(!audioCtx) ensureAudio();
+      startAmbientMusic();
+      startLeaves();
+      playBell();
+    } catch(e){ console.warn('start ambient failed', e); }
+  }, 1200);
+  updateMusicButton();
+};
+
+</script>
+</body>
+</html>
